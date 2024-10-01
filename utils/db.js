@@ -9,7 +9,7 @@ class DBClient {
 
     // MongoDB URI
     const url = `mongodb://${host}:${port}`;
-	
+
     // initialize the client and connect to the db
     this.client = new MongoClient(url, { useUnifiedTopology: true });
     this.dbName = database;
@@ -28,7 +28,8 @@ class DBClient {
    * @returns {boolean} true if connected, else false
    */
   isAlive() {
-    return this.client.isConnected();
+    return this.client.topology && this.client.topology.isConnected();
+    // return this.client.isConnected();
   }
 
   /**
@@ -37,8 +38,8 @@ class DBClient {
    */
   async nbUsers() {
     try {
-      const usrColn = this.db.collection('users');
-      const usrCount = await usrcoln.countDocuments();
+      const usrColn = this.db.collection('users'); // user collection
+      const usrCount = await usrColn.countDocuments(); // user count
       return usrCount;
     } catch (err) {
       console.error(`Getting user count failed: ${err}`);
