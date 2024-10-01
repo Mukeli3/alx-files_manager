@@ -1,7 +1,6 @@
 // stats and status endpoints logic
-import redisClient from '../utils/redis.js';
-import dbClient from '../utils/db.js';
-
+import redisClient from '../utils/redis';
+import dbClient from '../utils/db';
 
 class AppController {
   // GET /status
@@ -11,7 +10,7 @@ class AppController {
       const rOn = redisClient.isAlive();
       const dbOn = dbClient.isAlive();
 
-      res.status(200).json({ redis: redisAlive, db: dbAlive });
+      res.status(200).json({ redis: rOn, db: dbOn });
     } catch (err) {
       res.status(500).json({ err: 'Error fetching status' });
     }
