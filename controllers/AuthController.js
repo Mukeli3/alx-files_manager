@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'; // generating random strs
+import crypto from 'crypto'; // SHA1 password hashing
 import redisClient from '../utils/redis'; // token storage
 import dbClient from '../utils/db'; // user lookup
-import crypto from 'crypto'; // SHA1 password hashing
-
 
 class AuthController {
   /**
@@ -23,9 +22,9 @@ class AuthController {
     if (!email || !password) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    
+
     // hash password with SHA1
-    const hashed = crypro.createHash('sha1').update(password).digest('hex');
+    const hashed = crypto.createHash('sha1').update(password).digest('hex');
     try {
       // find usr in db
       const usr = await dbClient.db.collection('users').findOne({ email, password: hashed });
@@ -47,7 +46,7 @@ class AuthController {
    */
   static async getDisconnect(req, res) {
     const token = req.headers['x-token']; // get token fron X-Token header
-    if(!token) {
+    if (!token) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
