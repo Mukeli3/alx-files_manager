@@ -1,5 +1,5 @@
 import crypto from 'crypto'; // hash the password using SHA1
-import dbClient from '../utils/db'; // MongoDB client
+import { dbClient, ObjectId } from '../utils/db'; // MongoDB client
 import redisClient from '../utils/redis'; // Redis client
 
 class UsersController {
@@ -59,7 +59,7 @@ class UsersController {
 
     // retrieving user from MongoDB by ID
     try {
-      const usr = await dbClient.db.collection('users').findOne({ _id: dbClient.ObjectId(usrId) }, { projection: { email: 1 } });
+      const usr = await dbClient.db.collection('users').findOne({ _id: ObjectId(usrId) }, { projection: { email: 1 } });
       if (!usr) {
         return res.status(401).json({ error: 'Unauthorized' });
       }
