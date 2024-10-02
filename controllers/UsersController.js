@@ -1,5 +1,6 @@
 import crypto from 'crypto'; // hash the password using SHA1
 import dbClient from '../utils/db'; // MongoDB client
+import redisClient from '../utils/redis'; // Redis client
 
 class UsersController {
   /**
@@ -50,24 +51,24 @@ class UsersController {
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-     const key = `auth_${token}`;
-     const usrId = await redisClient.get(key);
-     if (!usrId) {
-       return res.status(401).json({ error: 'Unauthorized' });
-     }
+    const key = `auth_${token}`;
+    const usrId = await redisClient.get(key);
+    if (!usrId) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
 
-     // retrieving user from MongoDB by ID
-     try {
-       const usr = await dbClient.db.collection('users').findOne({_id: dbClient.ObjectId(usrId) }, { projection: { email: 1 } });
-       if (!usr) {
-         return res.status(401).json({ error: 'Unauthorized' });
-       }
+    // retrieving user from MongoDB by ID
+    try {
+      const usr = await dbClient.db.collection('users').findOne({ _id: dbClient.ObjectId(usrId) }, { projection: { email: 1 } });
+      if (!usr) {
+        return res.status(401).json({ error: 'Unauthorized' });
+      }
 
-       return res.status(200).json({ id: usr._id, email: usr.email });
-     } catch (err) {
-       console.error(`Error retrieving user: ${err}`);
-       return res.status(500).json({ error: 'Internal server error' });
-     }
+      return res.status(200).json({ id: usr._id, email: usr.email });
+    } catch (err) {
+      console.error(`Error retrieving user: ${err}`);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 }
 
